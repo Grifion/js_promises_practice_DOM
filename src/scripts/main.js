@@ -23,13 +23,21 @@ new Promise((resolve, reject) => {
   });
 
 new Promise((resolve) => {
-  document.addEventListener('click', () => {
-    resolve('Second promise was resolved');
-  });
+  document.addEventListener(
+    'click',
+    () => {
+      resolve('Second promise was resolved');
+    },
+    { once: true },
+  );
 
-  document.addEventListener('contextmenu', () => {
-    resolve('Second promise was resolved');
-  });
+  document.addEventListener(
+    'contextmenu',
+    () => {
+      resolve('Second promise was resolved');
+    },
+    { once: true },
+  );
 }).then((successResults) => {
   createNotification(successResults, true);
 });
@@ -38,15 +46,23 @@ new Promise((resolve) => {
   let left = false;
   let right = false;
 
-  document.addEventListener('click', () => {
-    left = true;
-    checkCondition();
-  });
+  document.addEventListener(
+    'click',
+    () => {
+      left = true;
+      checkCondition();
+    },
+    { once: true },
+  );
 
-  document.addEventListener('contextmenu', () => {
-    right = true;
-    checkCondition();
-  });
+  document.addEventListener(
+    'contextmenu',
+    () => {
+      right = true;
+      checkCondition();
+    },
+    { once: true },
+  );
 
   function checkCondition() {
     if (left && right) {
@@ -64,4 +80,12 @@ function createNotification(message, success = true) {
   divMessage.classList.add(success ? 'success' : 'error');
   divMessage.textContent = message;
   document.body.append(divMessage);
+
+  setTimeout(() => {
+    const notifications = document.querySelectorAll('[data-qa="notification"]');
+
+    notifications.forEach((notification) => {
+      notification.remove(); // Remove the element itself
+    });
+  }, 1000);
 }
