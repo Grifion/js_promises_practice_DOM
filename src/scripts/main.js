@@ -1,6 +1,6 @@
 'use strict';
 
-new Promise((resolve, reject) => {
+const firstPromice = new Promise((resolve, reject) => {
   const timeoutId = setTimeout(() => {
     // eslint-disable-next-line prefer-promise-reject-errors
     reject('First promise was rejected');
@@ -14,7 +14,9 @@ new Promise((resolve, reject) => {
     },
     { once: true },
   );
-})
+});
+
+firstPromice
   .then((successResults) => {
     createNotification(successResults, true);
   })
@@ -22,7 +24,7 @@ new Promise((resolve, reject) => {
     createNotification(errorResult, false);
   });
 
-new Promise((resolve) => {
+const secondPromice = new Promise((resolve) => {
   document.addEventListener(
     'click',
     () => {
@@ -38,11 +40,13 @@ new Promise((resolve) => {
     },
     { once: true },
   );
-}).then((successResults) => {
+});
+
+secondPromice.then((successResults) => {
   createNotification(successResults, true);
 });
 
-new Promise((resolve) => {
+const thirdPromice = new Promise((resolve) => {
   let left = false;
   let right = false;
 
@@ -69,23 +73,23 @@ new Promise((resolve) => {
       resolve('Third promise was resolved');
     }
   }
-}).then((successResults) => {
+});
+
+thirdPromice.then((successResults) => {
   createNotification(successResults, true);
 });
 
 function createNotification(message, success = true) {
+  const notifications = document.querySelectorAll('[data-qa="notification"]');
+
+  notifications.forEach((notification) => {
+    notification.remove();
+  });
+
   const divMessage = document.createElement('div');
 
   divMessage.setAttribute('data-qa', 'notification');
   divMessage.classList.add(success ? 'success' : 'error');
   divMessage.textContent = message;
   document.body.append(divMessage);
-
-  setTimeout(() => {
-    const notifications = document.querySelectorAll('[data-qa="notification"]');
-
-    notifications.forEach((notification) => {
-      notification.remove(); // Remove the element itself
-    });
-  }, 1000);
 }
