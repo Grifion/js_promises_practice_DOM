@@ -1,46 +1,61 @@
 'use strict';
 
-Promise((resolve, reject) => {
+new Promise((resolve, reject) => {
   const timeoutId = setTimeout(() => {
+    // eslint-disable-next-line prefer-promise-reject-errors
     reject('First promise was rejected');
   }, 3000);
 
   document.body.addEventListener(
     'click',
-    () => resolve('First promise was resolved'),
-    clearTimeout(timeoutId),
+    (e) => {
+      resolve('First promise was resolved');
+      clearTimeout(timeoutId);
+    },
     { once: true },
   );
 })
-  .then((successResults) => createNotification(successResults, true))
-  .catch((errorResult) => createNotification(errorResult, false));
+  .then((successResults) => {
+    createNotification(successResults, true);
+  })
+  .catch((errorResult) => {
+    createNotification(errorResult, false);
+  });
 
-Promise((resolve) => {
-  document.addEventListener('click', resolve('Second promise was resolved'));
+new Promise((resolve) => {
+  document.addEventListener('click', () => {
+    resolve('Second promise was resolved');
+  });
 
   document.addEventListener('contextmenu', () => {
     resolve('Second promise was resolved');
   });
-}).then((successResults) => createNotification(successResults, true));
+}).then((successResults) => {
+  createNotification(successResults, true);
+});
 
-Promise((resolve) => {
+new Promise((resolve) => {
   let left = false;
   let right = false;
 
-  document.addEventListener('click', () => (left = true), checkCondition());
+  document.addEventListener('click', () => {
+    left = true;
+    checkCondition();
+  });
 
-  document.addEventListener(
-    'contextmenu',
-    () => (right = true),
-    checkCondition(),
-  );
+  document.addEventListener('contextmenu', () => {
+    right = true;
+    checkCondition();
+  });
 
   function checkCondition() {
     if (left && right) {
       resolve('Third promise was resolved');
     }
   }
-}).then((successResults) => createNotification(successResults, true));
+}).then((successResults) => {
+  createNotification(successResults, true);
+});
 
 function createNotification(message, success = true) {
   const divMessage = document.createElement('div');
